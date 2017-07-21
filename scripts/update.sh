@@ -18,3 +18,5 @@ if [[ $STASH -eq 0 ]];
 then
 	git stash pop >/dev/null;
 fi;
+
+supervisorctrl todoist_web

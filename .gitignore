@@ -5,3 +5,5 @@ app.db
 /settings/local_settings.py
 sync/
 *.ipynb
+*.log
+/update.sh

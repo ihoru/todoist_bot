@@ -22,8 +22,8 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, nullable=False)
     last_active_at = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, classname, bases, dict_):
-        super().__init__(classname, bases, dict_)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.update = None  # type: Update
         self.message = None  # type: Message
         self.api = None  # type: TodoistAPI
@@ -49,7 +49,8 @@ class User(db.Model):
         if not self.auth:
             return
         try:
-            self.api = TodoistAPI(self.auth, cache=app.config['TODOIST']['CACHE'])
+            with app.app_context():
+                self.api = TodoistAPI(self.auth, cache=app.config['TODOIST']['CACHE'])
             result = self.api.sync()
             if 'error' in result:
                 raise SyncError

@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import TimedRotatingFileHandler
 
 from flask import Flask
 from flask_migrate import Migrate
@@ -7,6 +8,9 @@ from flask_sqlalchemy import SQLAlchemy
 from app.utils import md5
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger()
+logger.addHandler(TimedRotatingFileHandler('logs/debug.log', 'd'))
+
 app = Flask(__name__)
 
 app.config.from_object('settings')
