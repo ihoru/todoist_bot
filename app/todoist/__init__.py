@@ -22,8 +22,11 @@ def need_auth(state):
 
 @todoist.route('/auth')
 def auth():
+    from app.telegram.handlers import bot
     error = request.args.get('error')
     if error:
+        if error in ('access_denied', 'invalid_scope'):
+            return redirect(bot().link('error_' + error))
         return error
     code = request.args.get('code')
     state = request.args.get('state')
@@ -49,7 +52,7 @@ def auth():
     user.state = ''
     user.first_init_api()
     db.session.commit()
-    return redirect(app.bot.link())
+    return redirect(bot().link())
 
 
 @todoist.route('/callback/<string:client_id>', methods=['POST'])

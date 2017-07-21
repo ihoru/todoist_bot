@@ -77,6 +77,35 @@ def check_auth(func):
     return wrap
 
 
+def check_start_param(func):
+    def wrap(self, user: User):
+        while True:
+            if not user.message or not user.message.text or not str(user.message.text).startswith('/start '):
+                break
+            param = str(user.message.text).split(' ', 1)[1]
+            if not param.startswith('error_'):
+                break
+            with app.app_context():
+                if not user.state:
+                    user.state = str(uuid4())
+                url = url_for('todoist.need_auth', state=user.state, _external=True)
+                if param == 'error_access_denied':
+                    user.send_message(
+                        'If you want to use bot you have to grant us access to your Todoist account: {}\n'.format(url) +
+                        'We care about your privacy!'
+                    )
+                elif param == 'error_invalid_scope':
+                    user.send_message(
+                        'Shit happens...\n'
+                        'Please, try again: {}\n'.format(url)
+                    )
+                raise Stop
+            break
+        func(self, user)
+
+    return wrap
+
+
 class Flow(Exception):
     pass
 
@@ -92,10 +121,13 @@ class MyBot(Bot):
         self.dispatcher = Dispatcher(self, None)
         self.process_dispatcher()
 
-    def link(self):
-        return 'https://t.me/{}'.format(self.username)
+    def link(self, start=''):
+        if start:
+            start = '?start={}'.format(start)
+        return 'https://t.me/{}{}'.format(self.username, start)
 
     @handler_wrapper
+    @check_start_param
     @check_auth
     def start(self, user: User):
         user.send_message(
