@@ -19,4 +19,4 @@ then
 	git stash pop >/dev/null;
 fi;
 
-supervisorctrl todoist_web
+supervisorctl restart todoist_web
