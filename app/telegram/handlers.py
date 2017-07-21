@@ -157,6 +157,9 @@ class MyBot(Bot):
     @handler_wrapper
     @check_auth
     def welcome(self, user: User):
+        self.base_welcome(user)
+
+    def base_welcome(self, user: User):
         projects = ' '.join(['#' + project['name'] for project in user.api.projects.all()])
         labels = ' '.join(['@' + label['name'] for label in user.api.labels.all()])
         text = 'You were succesfully authorized!'

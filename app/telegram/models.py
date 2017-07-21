@@ -37,7 +37,7 @@ class User(db.Model):
         if not self.is_authorized():
             return
         from app.telegram.handlers import bot
-        bot().welcome(self)
+        bot().base_welcome(self)
 
     def init_api(self):
         if not self.is_authorized():
