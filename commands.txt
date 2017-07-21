@@ -1,0 +1,4 @@
+start - Begin dialog with bot
+labels - Send list of your labels
+projects - Send list of your projects
+stop - Deny bot to send anything you

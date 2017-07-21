@@ -78,7 +78,8 @@ def callback(client_id):
     item = user.api.items.get_by_id(data['event_data']['item_id'])
     if not item:
         return 'item not found'
-    text = item.data['content']
-    if not user.send_message(text):
+    from app.telegram.handlers import bot
+    result = bot().notification(user, item)
+    if not result:
         return 'bot was blocked'
     return 'Ok!'

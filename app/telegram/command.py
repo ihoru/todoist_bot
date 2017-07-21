@@ -29,3 +29,8 @@ def set_webhook():
 @BotCommand.command
 def delete_webhook():
     return bot().delete_webhook()
+
+
+@BotCommand.command
+def get_webhook_info():
+    return bot().get_webhook_info()

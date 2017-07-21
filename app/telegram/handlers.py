@@ -6,7 +6,9 @@ from sqlalchemy.orm import Query
 from telegram import Bot, Message
 from telegram import User as TgUser
 from telegram.ext import *
+from todoist.models import Item
 
+from app.telegram import emoji
 from app.telegram.models import User, db
 
 app = None
@@ -64,7 +66,11 @@ def check_auth(func):
             db.session.commit()
             with app.app_context():
                 url = url_for('todoist.need_auth', state=user.state, _external=True)
-                user.send_message('You need to authorize: {}'.format(url))
+                user.send_message(
+                    'You need to authorize: {}\n'.format(url) +
+                    'We promise, that we will not share you private information with anyone, or look at it by ourselves.\n'
+                    'You can check it open source code of this bot: {}'.format(app.config['PROJECT_REPOSITORY_LINK'])
+                )
                 raise Stop
         func(self, user)
 
@@ -92,11 +98,37 @@ class MyBot(Bot):
     @handler_wrapper
     @check_auth
     def start(self, user: User):
-        user.send_message('Started')
+        user.send_message(
+            'You are authorized! Everything is okey!\n'
+            'Now you can create new task just by writing it to me...'
+        )
+
+    @handler_wrapper
+    def stop(self, user: User):
+        user.send_message('We will not send you anything again until you send a message me.')
+        user.is_active = False
 
     @handler_wrapper
     @check_auth
-    def echo(self, user: User):
+    def labels(self, user: User):
+        labels = ' '.join(['@' + label['name'] for label in user.api.labels.all()])
+        if labels:
+            user.send_message('Your labels: ' + labels)
+        else:
+            user.send_message('You don\'t have any labels!')
+
+    @handler_wrapper
+    @check_auth
+    def projects(self, user: User):
+        projects = ' '.join(['#' + project['name'] for project in user.api.projects.all()])
+        if projects:
+            user.send_message('Your projects: ' + projects)
+        else:
+            user.send_message('You don\'t have any projects!')
+
+    @handler_wrapper
+    @check_auth
+    def any_text(self, user: User):
         item = user.api.quick.add(user.message.text)
         if not item:
             user.send_message('Could not create task')
@@ -108,12 +140,57 @@ class MyBot(Bot):
         user.send_message(answer)
 
     @handler_wrapper
+    def any_other(self, user: User):
+        user.send_message('This type of content is not supported.')
+
+    @handler_wrapper
+    def group(self, user: User):
+        user.message.reply_text(
+            'Bot is not available in group chat yet!\n'
+            'You can talk to me in private dialog: @{username}'.format(username=self.username)
+        )
+
+    @handler_wrapper
     def error(self, user: User):
-        user.send_message('Error accured')
+        user.send_message('Error occurred')
+
+    @handler_wrapper
+    @check_auth
+    def welcome(self, user: User):
+        projects = ' '.join(['#' + project['name'] for project in user.api.projects.all()])
+        labels = ' '.join(['@' + label['name'] for label in user.api.labels.all()])
+        text = 'You were succesfully authorized!'
+        if projects or labels:
+            text += '\n'
+        if projects:
+            text += '\nProjects: ' + projects
+        if labels:
+            text += '\nLabels: ' + labels
+        text += '\n\nNow you can send me a task that you want to save for later...'
+        user.send_message(text)
+
+    @handler_wrapper
+    @check_auth
+    def test_notification(self, user: User):
+        import random
+        items = user.api.items.all()
+        item = random.choice(items)
+        self.notification(user, item)
+
+    def notification(self, user: User, item: Item):
+        text = '{} {}'.format(emoji.DOUBLE_RED_EXCLAMATION, item.data['content'])
+        return user.send_message(text)
 
     def process_dispatcher(self):
+        self.dispatcher.add_handler(MessageHandler(Filters.group, self.group))
         self.dispatcher.add_handler(CommandHandler('start', self.start))
-        self.dispatcher.add_handler(MessageHandler(Filters.text, self.echo))
+        self.dispatcher.add_handler(CommandHandler(['stop', 'off'], self.stop))
+        self.dispatcher.add_handler(CommandHandler('labels', self.labels))
+        self.dispatcher.add_handler(CommandHandler('projects', self.projects))
+        self.dispatcher.add_handler(CommandHandler('welcome', self.welcome))  # for debug
+        self.dispatcher.add_handler(CommandHandler('test_notification', self.test_notification))  # for debug
+        self.dispatcher.add_handler(MessageHandler(Filters.text, self.any_text))
+        self.dispatcher.add_handler(MessageHandler(Filters.all, self.any_other))
         self.dispatcher.add_error_handler(self.error)
 
 

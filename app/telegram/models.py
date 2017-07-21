@@ -29,24 +29,18 @@ class User(db.Model):
         self.api = None  # type: TodoistAPI
         self.now = None  # type: datetime
 
+    def is_authorized(self):
+        return bool(self.auth)
+
     def first_init_api(self):
         self.init_api()
-        if not self.auth:
+        if not self.is_authorized():
             return
-        projects = ' '.join(['#' + project['name'] for project in self.api.projects.all()])
-        labels = ' '.join(['@' + label['name'] for label in self.api.labels.all()])
-        # TODO: say welcome
-        if not projects and not labels:
-            return
-        text = ''
-        if projects:
-            text += '\nProjects: ' + projects
-        if labels:
-            text += '\nLabels: ' + labels
-        self.send_message(text)
+        from app.telegram.handlers import bot
+        bot().welcome(self)
 
     def init_api(self):
-        if not self.auth:
+        if not self.is_authorized():
             return
         try:
             with app.app_context():
