@@ -1,0 +1,7 @@
+.idea/
+ENV/
+__pycache__/
+app.db
+/settings/local_settings.py
+sync/
+*.ipynb
