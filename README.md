@@ -1,6 +1,8 @@
 # Todoist bot fro Telegram
 <a href="https://t.me/Todoist_bot">@Todoist_bot</a> for Telegram (UNofficial).
 
+![Bot logo](https://raw.githubusercontent.com/ihoru/todoist_bot/master/logo.png)
+
 # Safety of you personal data
 I promise, that I don't use your personal infomation and don't make it public.
 
