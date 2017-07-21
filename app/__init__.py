@@ -24,4 +24,3 @@ app.register_blueprint(todoist)
 app.bot = handlers.MyBot(app.config['BOT_TOKEN'])
 
 migrate = Migrate(app, db)
-db.create_all()
