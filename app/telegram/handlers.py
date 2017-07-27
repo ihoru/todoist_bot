@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from uuid import uuid4
 
@@ -22,7 +23,7 @@ def init_app(state):
 
 
 def handler_wrapper(func):
-    def wrap(self, _, update):
+    def wrap(self, _, update, *args, **kwargs):
         assert isinstance(User.query, Query)
         assert isinstance(update.message, Message)
         tguser = update.message.from_user
@@ -49,7 +50,7 @@ def handler_wrapper(func):
         user.update = update
         user.message = update.message
         try:
-            func(self, user)
+            func(self, user, *args, **kwargs)
         except Flow:
             pass
         db.session.commit()
@@ -183,8 +184,9 @@ class MyBot(Bot):
         )
 
     @handler_wrapper
-    def error(self, user: User):
+    def error(self, user: User, error):
         user.send_message('Error occurred')
+        logging.warning('Error occurred: {}'.format(error))
 
     @handler_wrapper
     @check_auth

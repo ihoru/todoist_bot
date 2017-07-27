@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import hmac
 import logging
 
 import requests
@@ -64,9 +65,9 @@ def callback(client_id):
     signature = request.headers['X-Todoist-Hmac-SHA256']
     password = request.data
     salt = app.config['TODOIST']['CLIENT_SECRET'].encode()
-    my_signature = base64.encodebytes(hashlib.pbkdf2_hmac('sha256', password, salt, 100000)).decode()
+    my_signature = base64.b64encode(hmac.new(salt, request.data, hashlib.sha256).digest()).decode()
     if signature != my_signature:
-        logging.warning('wrong signature')
+        logging.warning('Wrong signature my: {} got: {} data: {}'.format(my_signature, signature, request.data))
         # return 'wrong signature'
     data = request.json
     if not data:
