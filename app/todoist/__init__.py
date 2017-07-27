@@ -68,7 +68,7 @@ def callback(client_id):
     my_signature = base64.b64encode(hmac.new(salt, request.data, hashlib.sha256).digest()).decode()
     if signature != my_signature:
         logging.warning('Wrong signature my: {} got: {} data: {}'.format(my_signature, signature, request.data))
-        # return 'wrong signature'
+        return 'wrong signature'
     data = request.json
     if not data:
         return 'empty json'
