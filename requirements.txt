@@ -3,7 +3,7 @@ Flask==0.12.2
 Flask-Migrate==2.0.4
 Flask-SQLAlchemy==2.2
 python-telegram-bot==6.1.0
-requests==2.18.1
+requests==2.20.0
 todoist-python==7.0.17
 ## The following requirements were added by pip freeze:
 alembic==0.9.3
