@@ -1,5 +1,5 @@
 ipython==6.1.0
-Flask==0.12.2
+Flask==1.0
 Flask-Migrate==2.0.4
 Flask-SQLAlchemy==2.2
 python-telegram-bot==6.1.0
