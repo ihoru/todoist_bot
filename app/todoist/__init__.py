@@ -76,6 +76,7 @@ def callback(client_id):
         return 'wrong event_name'
     user = User.query.filter(User.todoist_id == data['user_id'], User.is_active == True).one_or_none()
     if not user:
+        # TODO: we should revoke authorization for user and delete all his data in Todoist's sync directory
         return 'user was not found'
     user.init_api()
     assert isinstance(user.api, TodoistAPI)

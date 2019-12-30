@@ -171,7 +171,7 @@ class MyBot(Bot):
         labels = item['labels']
         if labels:
             labels = ['@' + label.data['name'] for label in user.api.labels.all() if label.data['id'] in labels]
-        answer = 'Task added:\n{} {} {}'.format(item['content'], ' '.join(labels), item['date_string'] or '')
+        answer = 'Task added:\n{} {} {}'.format(item['content'], ' '.join(labels), item['due'] or '')
         user.send_message(answer)
 
     @handler_wrapper
