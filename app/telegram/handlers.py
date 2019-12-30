@@ -66,8 +66,6 @@ def check_auth(func):
         if not user.is_authorized():
             assert isinstance(self, MyBot), self
             user.state = str(uuid4())
-            db.session.add(user)
-            db.session.commit()
             with app.app_context():
                 url = url_for('todoist.need_auth', state=user.state, _external=True)
                 user.send_message(

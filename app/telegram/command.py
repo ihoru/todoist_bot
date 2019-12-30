@@ -4,6 +4,7 @@ from flask_script import Manager
 from telegram.ext import Updater
 
 from app.telegram.handlers import bot
+from app.telegram.models import User
 
 allowed_updates = ['message']
 BotCommand = Manager(usage='Bot manipulation commands')
@@ -34,3 +35,13 @@ def delete_webhook():
 @BotCommand.command
 def get_webhook_info():
     return bot().get_webhook_info()
+
+
+@BotCommand.command
+def set_all(text):
+    users = User.query.all()
+    for user in users:
+        print(user.id)
+        result = user.send_message(text)
+        print(bool(result))
+    return 'ok'
