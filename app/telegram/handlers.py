@@ -63,9 +63,10 @@ def handler_wrapper(func):
 def check_auth(func):
     def wrap(self, user: User):
         user.init_api()
-        if not user.auth:
+        if not user.is_authorized():
             assert isinstance(self, MyBot), self
             user.state = str(uuid4())
+            db.session.add(user)
             db.session.commit()
             with app.app_context():
                 url = url_for('todoist.need_auth', state=user.state, _external=True)
