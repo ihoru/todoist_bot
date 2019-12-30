@@ -5,7 +5,7 @@ from telegram.ext import Updater
 
 from app.telegram.handlers import bot
 
-allowed_updates = ['message', 'callback_query']
+allowed_updates = ['message']
 BotCommand = Manager(usage='Bot manipulation commands')
 
 bot_command = Blueprint('bot_command', __name__)
