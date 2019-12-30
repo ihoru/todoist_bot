@@ -73,7 +73,8 @@ def check_auth(func):
                 user.send_message(
                     'You need to authorize: {}\n'.format(url) +
                     'We promise, that we will not share you private information with anyone, or look at it by ourselves.\n'
-                    'You can check it open source code of this bot: {}'.format(app.config['PROJECT_REPOSITORY_LINK'])
+                    'You can check it open source code of this bot: {}'.format(app.config['PROJECT_REPOSITORY_LINK']),
+                    disable_web_page_preview=True,
                 )
                 raise Stop
         func(self, user)
