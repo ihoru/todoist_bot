@@ -38,7 +38,7 @@ def get_webhook_info():
 
 
 @BotCommand.command
-def set_all(text):
+def send_all(text):
     users = User.query.all()
     for user in users:
         print(user.id)
