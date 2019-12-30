@@ -22,6 +22,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, nullable=False)
     last_active_at = db.Column(db.DateTime, nullable=True)
 
+    # noinspection PyTypeChecker
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.update = None  # type: Update
@@ -61,5 +62,6 @@ class User(db.Model):
             return bot().send_message(self.tg_id, text, **kwargs)
         except Unauthorized:
             self.is_active = False
+            db.session.add(self)
             db.session.commit()
         return False
