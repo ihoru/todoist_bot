@@ -64,7 +64,6 @@ def callback(client_id):
     if 'X-Todoist-Hmac-SHA256' not in request.headers:
         return 'no signature'
     signature = request.headers['X-Todoist-Hmac-SHA256']
-    password = request.data
     salt = app.config['TODOIST']['CLIENT_SECRET'].encode()
     my_signature = base64.b64encode(hmac.new(salt, request.data, hashlib.sha256).digest()).decode()
     if signature != my_signature:
