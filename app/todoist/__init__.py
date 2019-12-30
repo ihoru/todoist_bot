@@ -52,6 +52,7 @@ def auth():
     user.auth = result['access_token']
     user.state = ''
     user.first_init_api()
+    db.session.add(user)
     db.session.commit()
     return redirect(bot().link())
 
