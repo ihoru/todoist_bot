@@ -1,7 +1,7 @@
-ipython==6.1.0
-Flask==0.12.2
+ipython==7.10.2
+Flask==0.12.4
 Flask-Migrate==2.0.4
 Flask-SQLAlchemy==2.2
 python-telegram-bot==6.1.0
-requests==2.20.0
-todoist-python==7.0.17
+requests==2.22.0
+todoist-python==8.1.1
