@@ -18,5 +18,6 @@ if [[ $STASH -eq 0 ]];
 then
 	git stash pop >/dev/null;
 fi;
+$PWD/scripts/install_requirements.sh;
 
 supervisorctl restart todoist_web
