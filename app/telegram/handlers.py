@@ -24,36 +24,38 @@ def init_app(state):
 
 def handler_wrapper(func):
     def wrap(self, _, update, *args, **kwargs):
-        assert isinstance(User.query, Query)
-        assert isinstance(update.message, Message)
-        tguser = update.message.from_user
-        assert isinstance(tguser, TgUser)
-        user = User.query.filter(User.tg_id == tguser.id).one_or_none()
-        now = datetime.now()
-        if not user:
-            user = User(
-                tg_id=tguser.id,
-                first_name=tguser.first_name,
-                last_name=tguser.last_name or '',
-                username=tguser.username,
-                created_at=now,
-                last_active_at=now,
-            )
+        with app.app_context():
+            assert isinstance(User.query, Query)
+            assert isinstance(update.message, Message)
+            tguser = update.message.from_user
+            assert isinstance(tguser, TgUser)
+            user = User.query.filter(User.tg_id == tguser.id).one_or_none()
+            now = datetime.now()
+            if not user:
+                user = User(
+                    tg_id=tguser.id,
+                    first_name=tguser.first_name,
+                    last_name=tguser.last_name or '',
+                    username=tguser.username,
+                    created_at=now,
+                    last_active_at=now,
+                )
+                db.session.add(user)
+                db.session.commit()
+            else:
+                user.first_name = tguser.first_name
+                user.last_name = tguser.last_name or ''
+                user.username = tguser.username
+                user.last_active_at = now
+                user.is_active = True
+            user.update = update
+            user.message = update.message
+            try:
+                func(self, user, *args, **kwargs)
+            except Flow:
+                pass
             db.session.add(user)
             db.session.commit()
-        else:
-            user.first_name = tguser.first_name
-            user.last_name = tguser.last_name or ''
-            user.username = tguser.username
-            user.last_active_at = now
-            user.is_active = True
-        user.update = update
-        user.message = update.message
-        try:
-            func(self, user, *args, **kwargs)
-        except Flow:
-            pass
-        db.session.commit()
 
     return wrap
 
