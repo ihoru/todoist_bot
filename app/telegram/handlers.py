@@ -136,7 +136,7 @@ class MyBot(Bot):
     @check_auth
     def start(self, user: User):
         user.send_message(
-            'You are authorized! Everything is okey!\n'
+            'You are authorized! Everything is good!\n'
             'Now you can create new task just by writing it to me...'
         )
 
@@ -200,7 +200,7 @@ class MyBot(Bot):
     def base_welcome(self, user: User):
         projects = ' '.join(['#' + project['name'] for project in user.api.projects.all()])
         labels = ' '.join(['@' + label['name'] for label in user.api.labels.all()])
-        text = 'You were succesfully authorized!'
+        text = 'You were successfully authorized!'
         if projects or labels:
             text += '\n'
         if projects:
