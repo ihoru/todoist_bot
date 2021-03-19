@@ -15,7 +15,7 @@ Flask-Script==2.0.5
 idna==2.5
 itsdangerous==0.24
 jedi==0.10.2
-Jinja2==2.9.6
+Jinja2==2.11.3
 prompt-toolkit==2.0.10
 ptyprocess==0.5.2
 python-editor==1.0.3
