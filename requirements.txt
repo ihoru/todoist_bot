@@ -1,4 +1,4 @@
-ipython==7.10.2
+ipython==7.16.3
 Flask==0.12.4
 Flask-Migrate==2.0.4
 Flask-SQLAlchemy==2.2
